@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
 import 'counter_controller.dart';
 
-class Counter_View extends StatefulWidget {
-  const Counter_View({super.key});
+class CounterView extends StatefulWidget {
+  const CounterView({super.key});
 
   @override
-  State<Counter_View> createState() => _CounterViewState();
+  State<CounterView> createState() => _CounterViewState();
 }
 
-class _CounterViewState extends State<Counter_View> {
-  final Counter_Controller _controller = Counter_Controller();
+class _CounterViewState extends State<CounterView> {
+  final CounterController _controller = CounterController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Task 1: Multi-Step Counter")),
+      appBar: AppBar(title: const Text("Task 2: Counter with History")),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Nilai Counter:"),
-            Text(
-              '${_controller.value}',
-              style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30),
+            
             TextField(
-              decoration: const InputDecoration(
-                labelText: "Nilai Step",
-                border: OutlineInputBorder(),
-              ),
+              decoration: const InputDecoration(labelText: "Nilai Step"),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -39,6 +30,16 @@ class _CounterViewState extends State<Counter_View> {
               },
             ),
             const SizedBox(height: 20),
+            
+            
+            const Text("Total:"),
+            Text(
+              '${_controller.value}',
+              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -47,18 +48,35 @@ class _CounterViewState extends State<Counter_View> {
                   child: const Text("-"),
                 ),
                 ElevatedButton(
-                  onPressed: () => setState(() => _controller.reset()),
-                  child: const Text("Reset"),
-                ),
-                ElevatedButton(
                   onPressed: () => setState(() => _controller.increment()),
                   child: const Text("+"),
                 ),
               ],
             ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() => _controller.reset());
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Riwayat di-reset")),
+                );
+              },
+              child: const Text("Reset"),
+            ),
+            
+            const Divider(),
+            const Text("Riwayat :", style: TextStyle(fontWeight: FontWeight.bold)),
+            
+           
+            Expanded(
+              child: ListView.builder(
+                itemCount: _controller.history.length,
+                itemBuilder: (context, index) {
+                  return Text(_controller.history[index]);
+                },
+              ),
+            ),
           ],
         ),
-        
       ),
     );
   }
