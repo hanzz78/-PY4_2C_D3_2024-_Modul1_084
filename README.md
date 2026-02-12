@@ -1,0 +1,1 @@
+Penerapan prinsip Single Responsibility Principle (SRP) sangat membantu dalam pengembangan fitur History Logger pada proyek ini. Dengan memisahkan logika perhitungan dan pengelolaan data riwayat ke dalam kelas CounterController dan memisahkan tampilan antarmuka ke dalam CounterView, proses penambahan fitur menjadi sangat efisien
