@@ -24,23 +24,22 @@ class CounterController {
     }
   }
 
-  void increment() {
+void increment() {
     _counter += _step;
-    _history.insert(0, "[${_getWaktu()}] Ditambah $_step (Total: $_counter)");
+    _history.insert(0, "TAMBAH: [${_getWaktu()}] Menambahkan $_step (Total: $_counter)");
     _cekBatasRiwayat();
   }
 
   void decrement() {
     if (_counter >= _step) {
       _counter -= _step;
-      _history.insert(0, "[${_getWaktu()}] Dikurang $_step (Total: $_counter)");
+      _history.insert(0, "KURANG: [${_getWaktu()}] Mengurangi $_step (Total: $_counter)");
     } else {
       _counter = 0;
-      _history.insert(0, "[${_getWaktu()}] Reset ke 0 (Batas Bawah)");
+      _history.insert(0, "RESET: [${_getWaktu()}] Sudah Mencapai Batas Minimum");
     }
     _cekBatasRiwayat();
   }
-
   void reset() {
     _counter = 0;
     _history.clear();
