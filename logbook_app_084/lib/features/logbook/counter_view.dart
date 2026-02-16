@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'counter_controller.dart';
 
 class CounterView extends StatefulWidget {
-  const CounterView({super.key});
+  final String username;
+  const CounterView({super.key, required this.username});
+
   @override
   State<CounterView> createState() => _CounterViewState();
 }
