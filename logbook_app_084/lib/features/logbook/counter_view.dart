@@ -12,7 +12,21 @@ class CounterView extends StatefulWidget {
 class _CounterViewState extends State<CounterView> {
   final CounterController _controller = CounterController();
 
-  // FUNGSI UNTUK KONFIRMASI RESET (UX Improvement)
+  @override
+  void initState() {
+    super.initState();
+    _initData(); 
+  }
+
+  
+  void _initData() async {
+    await _controller.loadData(widget.username);
+    if (mounted) {
+      setState(() {}); 
+    }
+  }
+
+  
   void _tampilkanDialogKonfirmasi() {
     showDialog(
       context: context,
@@ -22,13 +36,13 @@ class _CounterViewState extends State<CounterView> {
           content: const Text("Hapus semua hitungan dan riwayat?"),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context), // Tutup dialog jika Batal
+              onPressed: () => Navigator.pop(context), 
               child: const Text("BATAL"),
             ),
             TextButton(
               onPressed: () {
                 setState(() => _controller.reset());
-                Navigator.pop(context); // Tutup dialog
+                Navigator.pop(context); 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Data berhasil dibersihkan!"),
@@ -74,24 +88,23 @@ class _CounterViewState extends State<CounterView> {
             const Divider(thickness: 2),
             const Text("5 Riwayat Terakhir:", style: TextStyle(fontWeight: FontWeight.bold)),
             
-            // LISTVIEW DENGAN WARNA (UI Polishing)
             Expanded(
               child: ListView.builder(
                 itemCount: _controller.history.length,
                 itemBuilder: (context, index) {
                   String item = _controller.history[index];
+                  String itemCheck = item.toLowerCase().trim();
                   Color warnaTeks = Colors.black;
 
-                  if (item.startsWith("TAMBAH")) warnaTeks = Colors.green;
-                  if (item.startsWith("KURANG")) warnaTeks = Colors.red;
+                  if (itemCheck.contains("menambah")) {warnaTeks = Colors.green;
+                  }
+                  else if (itemCheck.contains("mengurangi")){ warnaTeks = Colors.red;  
+                  }
 
                   return ListTile(
                     leading: Icon(Icons.circle, color: warnaTeks, size: 12),
                     title: Text(
-                      item
-                          .replaceFirst("TAMBAH: ", "")
-                          .replaceFirst("KURANG: ", "")
-                          .replaceFirst("RESET: ", ""),
+                      item,
                       style: TextStyle(color: warnaTeks, fontWeight: FontWeight.w500),
                     ),
                   );
@@ -116,7 +129,7 @@ class _CounterViewState extends State<CounterView> {
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () => setState(() => _controller.increment()),
+                onPressed: () => setState(() => _controller.increment(widget.username)),
               ),
             ),
             const SizedBox(height: 10),
@@ -130,7 +143,7 @@ class _CounterViewState extends State<CounterView> {
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () => setState(() => _controller.decrement()),
+                onPressed: () => setState(() => _controller.decrement(widget.username)),
               ),
             ),
             const SizedBox(height: 10),
@@ -144,7 +157,6 @@ class _CounterViewState extends State<CounterView> {
                   backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
                 ),
-                // MENGGUNAKAN DIALOG KONFIRMASI (UX Improvement)
                 onPressed: _tampilkanDialogKonfirmasi, 
               ),
             ),
@@ -154,3 +166,4 @@ class _CounterViewState extends State<CounterView> {
     );
   }
 }
+
