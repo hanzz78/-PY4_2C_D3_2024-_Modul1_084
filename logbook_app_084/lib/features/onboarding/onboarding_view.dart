@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:logbook_app_084/features/auth/login_view.dart';
+import '../auth/login_view.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -8,57 +8,139 @@ class OnboardingView extends StatefulWidget {
   State<OnboardingView> createState() => _OnboardingViewState();
 }
 
-class _OnboardingViewState extends State<OnboardingView> { 
-  int _step = 1;
+class _OnboardingViewState extends State<OnboardingView> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
 
-  final List<String> _desc = [
-    "Selamat Datang di Logbook App!",
-    "Catat setiap aktivitasmu dengan mudah.",
-    "Data aman dan terorganisir dengan rapi."
+  final List<Map<String, String>> onboardingData = [
+    {
+      "title": "Input Data",
+      "image": "assets/images/gambar1.jpg",
+      "desc": "Mulai harimu dengan mencatat setiap pencapaian kecil."
+    },
+    {
+      "title": "Real-time Counting",
+      "image": "assets/images/gambar2.jpg",
+      "desc": "Pantau hitungan secara akurat dan real-time di mana saja."
+    },
+    {
+      "title": "Data Security",
+      "image": "assets/images/gambar3.jpg",
+      "desc": "Privasimu prioritas kami. Semua data tersimpan aman."
+    },
   ];
-
-  void _nextStep() {
-    setState(() {
-      if (_step < 3) {
-        _step++;  
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginView()),
-        );
-      }
-    });
+  Widget _buildIndicator(int index) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      height: 10,
+      width: _currentPage == index ? 25 : 10, 
+      decoration: BoxDecoration(
+        color: _currentPage == index ? Colors.indigo : Colors.grey.shade400,
+        borderRadius: BorderRadius.circular(5),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "$_step",
-                style: const TextStyle(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.indigo),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _desc[_step - 1],
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 50),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _nextStep,
-                  child: Text(_step < 3 ? "Lanjut" : "Mulai Sekarang"),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (value) {
+                  setState(() {
+                    _currentPage = value;
+                  });
+                },
+                itemCount: onboardingData.length,
+                itemBuilder: (context, index) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Spacer(),
+                    Image.asset(
+                      onboardingData[index]["image"]!,
+                      height: 250,
+                      fit: BoxFit.contain,
+                    ),
+                    const Spacer(),
+                    Text(
+                      onboardingData[index]["title"]!,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.indigo,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Text(
+                        onboardingData[index]["desc"]!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            
+            Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      onboardingData.length,
+                      (index) => _buildIndicator(index),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (_currentPage == onboardingData.length - 1) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginView()),
+                            );
+                          } else {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease,
+                            );
+                          }
+                        },
+                        child: Text(
+                          _currentPage == onboardingData.length - 1 
+                              ? "Mulai Sekarang" 
+                              : "Lanjut",
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
